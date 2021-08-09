@@ -1,0 +1,11 @@
+Command For Running Python
+Cuda Home To Export:
+        export CUDA_HOME=/new_disk_B/dyx/anaconda3/pkgs/cudatoolkit-10.1.243-h6bb024c_0/
+Eval:
+        python eval.py --cfg experiments/vgg16_PGNN_structure_willow.yaml --epoch 6
+Train:
+        python train_eval.py --cfg experiments/vgg16_pgnn_structure_willow.yaml
+        python train_eval.py --cfg experiments/vgg16_pgnn_structure_voc.yaml
+        python train_eval.py --cfg experiments/vgg16_pgnn_structure_cub.yaml
+        python train_eval.py --cfg experiments/vgg16_pgnn_structure_impct.yaml
+The sintel dataset will be implemented in the future
