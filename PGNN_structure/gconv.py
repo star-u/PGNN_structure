@@ -19,8 +19,7 @@ class Gconv(nn.Module):
         self.new_fc = nn.Linear(self.new_num_inputs, self.new_num_outputs)
 
         self.act = nn.ReLU()
-        self.atts = nn.Parameter(torch.Tensor(np.random.rand(2, 2)))  # num_layer=2
-        self.eps = nn.Parameter(torch.zeros(2 - 1))
+
         for m in self.modules():
             if isinstance(m, nn.Linear):
                 m.weight.data = init.xavier_uniform_(m.weight.data, gain=nn.init.calculate_gain('tanh'))
@@ -32,8 +31,8 @@ class Gconv(nn.Module):
         dists_max, dists_argmax, dist_graph = caculate(A)
         temp_a = torch.zeros(len(dists_max), dists_max[0].shape[0], dists_max[0].shape[1])
 
-        #A = concateTensor(A)
-        A = torch.add(A, count_entropy(A))
+        A = concateTensor(A)
+        #A = torch.add(A, count_entropy(A))
 
         dists_argmax_arr = np.array(dists_argmax)
         dists_argmax_arr_fla = dists_argmax_arr.flatten()
@@ -71,23 +70,26 @@ class Gconv(nn.Module):
         #resume2 =False
         #assert resume2,"break"
         
-        message = torch.matmul(dist_graph_zero,subset_features).to(device)
+       # message = torch.matmul(dist_graph_zero,subset_features).to(device)
 
-        au = torch.cat((alpha*message,x),-1).to(device)
-        #au = alpha*message + x
-        #au = nn.AdaptiveAvgPool1d(self.num_inputs)(au)
+        #au = torch.cat((alpha*message,x),-1).to(device)
+        au = alpha*subset_features + x
+        au = nn.AdaptiveAvgPool1d(self.num_outputs)(au)
    
         A = F.normalize(A, p=1, dim=-2)
         
-        self.m_fc = nn.Linear(au.shape[2], self.num_outputs).to(device)
+        #self.m_fc = nn.Linear(au.shape[2], self.num_outputs).to(device)
 
-        au = self.m_fc(au)
-        au = self.act(au)
-        #au = nn.AdaptiveAvgPool1d(au.shape[2])(au)   
-        ux = self.u_fc(x)
- 
+        #au = self.a_fc(au)
+        #au = nn.AdaptiveAvgPool1d(au.shape[2])(au)
+        #au = self.act(au)
+        
+        #ux = self.u_fc(x)
+        ux = nn.AdaptiveAvgPool1d(self.num_outputs)(x)
+
         x = torch.bmm(A, F.relu(au)) +F.relu(ux)  # has size (bs, N, num_outputs)
 
+        
         x2 = A_src_motif_label_list
         x2 = torch.mean(x2.type(torch.FloatTensor), dim=1, keepdim=True)
 

@@ -493,10 +493,13 @@ class Net(CNN):
 
                 h33 = torch.mm(motif2A, h3).to(device)
                 h33 = h33.reshape(h1.shape[0], h1.shape[1], h1.shape[2])
-                #h33 = nn.AdaptiveAvgPool1d(h33.shape[2])(h33)
-
+                h33 = nn.AdaptiveMaxPool1d(h33.shape[2])(h33)
+                '''
+                for i in range(len(h33)):
+                     print(torch.max(h33[i]), torch.min(h33[i]))
+                     '''
                 h1 = h1 + beta * h33
-
+                
                 emb1 = h1
 
                 h2 = emb2
@@ -530,9 +533,13 @@ class Net(CNN):
                 
                                 
                 h44 = h44.reshape(h2.shape[0], h2.shape[1], h2.shape[2])
-                #h44 = nn.AdaptiveAvgPool1d(h44.shape[2])(h44)
-   
-                
+                h44 = nn.AdaptiveMaxPool1d(h44.shape[2])(h44)
+                '''
+                for i in range(len(h44)):
+                    print(torch.max(h44[i]), torch.min(h44[i]))
+                resume2 =False
+                assert resume2,"break"
+                '''
                 h2 = h2 + beta * h44
 
                 emb2 = h2
