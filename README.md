@@ -22,5 +22,3 @@ Iteration
 
 * Use iteration=True in "PGNN_structure/model.py" to see how iterative position and structure GCN works.
 Cite
-
-* If you want to use our implementations, please cite as follow:
